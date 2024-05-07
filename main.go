@@ -36,21 +36,15 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func contactHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Clean("templates/contact.gohtml")
-	executeTemplate(w, tplPath)
+	// tplPath := filepath.Clean("templates/contact.gohtml")
+	// executeTemplate(w, tplPath)
+	executeTemplate(w, "templates/contact.gohtml")
 }
 
 func faqHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprint(w, `<h1>FAQ</h1> 
-	<ul> 
-		<li>Q: What are your support hours?</li>
-		<li>A: Yes! We offer a free trail for 30 days on any paid plans.</li><br>
-		<li>Q: What are your support hours?</li>
-		<li>A: We have support staff answering emails 24/7, though reponse times may be a bit slower on weekends.</li><br>
-		<li>Q: How do I contact support?</li>
-		<li>A: Email us - <a href="mailto:support@lenslocked.com">support@lenslocked.com</a></li>
-	</ul>`)
+	tplPath := filepath.Clean("templates/faq.gohtml")
+	executeTemplate(w, tplPath)
+
 }
 
 func main() {
