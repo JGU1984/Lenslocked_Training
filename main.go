@@ -28,6 +28,11 @@ func main() {
 		"faq.gohtml", "tailwind.gohtml",
 	))))
 
+	r.Get("/signup", controllers.StaticHandler(views.Must(views.ParseFS(
+		templates.FS,
+		"signup.gohtml", "tailwind.gohtml",
+	))))
+
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "whoops, 404 it is, that's no gouda, try another path ", http.StatusNotFound)
 	})
