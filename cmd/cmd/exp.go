@@ -1,30 +1,31 @@
 package main
 
 import (
-	"html/template"
-	"os"
+	"fmt"
+
+	"github.com/jgu1984/lenslocked/models"
 )
 
-type User struct {
-	Name string
-	Bio  string
-	Age  int
-}
-
 func main() {
-	t, err := template.ParseFiles("hello.gohtml")
+	cfg := models.DefaultPostgresConfig()
+	db, err := models.Open(cfg)
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 
-	user := User{
-		Name: "Jon Calhoun",
-		Bio:  `<script>alert("Haha, you have been h4x0r3d!");</script>`,
-		Age:  123,
-	}
-
-	err = t.Execute(os.Stdout, user)
+	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Connected!")
+
+	us := models.UserService{
+		DB: db,
+	}
+	user, err := us.Create("testar1@testarsson", "test123")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(user)
 }
