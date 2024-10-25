@@ -40,14 +40,7 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/signin", http.StatusNotFound)
 		return
 	}
-
-	cookie := http.Cookie{
-		Name:     "Session",
-		Value:    session.Token,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(w, &cookie)
+	setCookie(w, CookieSession, session.Token)
 	http.Redirect(w, r, "/users/me", http.StatusFound)
 	fmt.Fprintf(w, "User created: %+v", user)
 }
@@ -80,19 +73,13 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := http.Cookie{
-		Name:     "session",
-		Value:    session.Token,
-		Path:     "/",
-		HttpOnly: true,
-	}
-	http.SetCookie(w, &cookie)
+	setCookie(w, CookieSession, session.Token)
 	http.Redirect(w, r, "/users/me", http.StatusFound)
 	fmt.Fprintf(w, "User authenticated: %+v", user)
 }
 
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
-	token, err := r.Cookie("session")
+	token, err := readCookie(r, CookieSession)
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "signin", http.StatusFound)
@@ -103,7 +90,7 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "The email cookie could not be read.")
 		return
 	}
-	user, err := u.SesssionService.User(token.Value)
+	user, err := u.SesssionService.User(token)
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/signin", http.StatusFound)
