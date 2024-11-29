@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"fmt"
-	"go/token"
 
 	"github.com/jgu1984/lenslocked/rand"
 )
@@ -48,7 +47,14 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 		Token:     token,
 		TokenHash: ss.hash(token),
 	}
-	// TODO: Impliment SessionService.Create
+	row := ss.DB.QueryRow(`
+	INSERT INTO sessions (user_id, token_hash)
+	VALUES ($1, $2)
+	RETURNING id;`, session.UserID, session.TokenHash)
+	err = row.Scan(&session.ID)
+	if err != nil {
+		return nil, fmt.Errorf("create: %w", err)
+	}
 	return &session, nil
 }
 
